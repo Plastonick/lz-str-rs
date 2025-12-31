@@ -1,7 +1,7 @@
 [package]
 name = "lz-str-py"
 version = "0.0.0"
-edition = "2021"
+edition = "2024"
 
 [lib]
 name = "lz_str_py"
@@ -9,7 +9,7 @@ crate-type = [ "cdylib" ]
 
 [dependencies]
 lz-str = { path = "../.." }
-pyo3 = { version = "0.20.3", features = [ "extension-module", "abi3", "abi3-py37" ] }
+pyo3 = { version = "0.27.2", features = [ "extension-module", "abi3", "abi3-py311" ] }
 
 [features]
 rustc-hash = [

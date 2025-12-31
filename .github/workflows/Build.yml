@@ -1,5 +1,5 @@
 name: Build
-'on':
+"on":
   push:
     branches:
       - master
@@ -7,15 +7,15 @@ name: Build
     branches:
       - master
 jobs:
-  Lint:
+  lint:
     name: Lint
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v3
-        
+        uses: actions/checkout@v6
+
       - name: Cache
-        uses: actions/cache@v3
+        uses: actions/cache@v5
         with:
           path: |
             ~/.cargo/bin/
@@ -23,31 +23,33 @@ jobs:
             ~/.cargo/registry/cache/
             ~/.cargo/git/db/
             target/
-          key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
-        
+          key: ${{ runner.os }}-lint-cargo-${{ hashFiles('**/Cargo.lock') }}
+
       - name: RustFmt
         run: cargo fmt --all -- --check
-      
+
       - name: Clippy
         run: cargo clippy --tests --examples --all -- -D warnings
-          
-  Deny:
+
+  deny:
+    name: Deny
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v3
-        
+        uses: actions/checkout@v6
+
       - name: Deny
-        uses: EmbarkStudios/cargo-deny-action@v1
-        
-  Build:
+        uses: EmbarkStudios/cargo-deny-action@v2
+
+  build:
+    name: Build
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v3
-        
+        uses: actions/checkout@v6
+
       - name: Cache
-        uses: actions/cache@v3
+        uses: actions/cache@v5
         with:
           path: |
             ~/.cargo/bin/
@@ -55,16 +57,16 @@ jobs:
             ~/.cargo/registry/cache/
             ~/.cargo/git/db/
             target/
-          key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
-        
+          key: ${{ runner.os }}-build-cargo-${{ hashFiles('**/Cargo.lock') }}
+
       - name: Build
         run: cargo build --verbose
-        
+
       - name: Build with `rustc-hash`
         run: cargo build --verbose --features=rustc-hash
-        
+
       - name: Run All Tests
         run: cargo test --all --verbose
-        
+
       - name: Run Tests for `lz-str` with `rustc-hash`
         run: cargo test --verbose --features=rustc-hash

@@ -1,21 +1,22 @@
 name: Bindings
-'on':
+"on":
   push:
     branches:
       - master
   pull_request:
     branches:
       - master
-      
+
 jobs:
-  WebAssembly:
+  webAssembly:
+    name: WebAssembly
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v3
-        
+        uses: actions/checkout@v6
+
       - name: Cache
-        uses: actions/cache@v3
+        uses: actions/cache@v5
         with:
           path: |
             ~/.cargo/bin/
@@ -23,31 +24,32 @@ jobs:
             ~/.cargo/registry/cache/
             ~/.cargo/git/db/
             target/
-          key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
-          
+          key: ${{ runner.os }}-wasm-cargo-${{ hashFiles('**/Cargo.lock') }}
+
       - name: Install Wasm-Pack
         run: curl https://rustwasm.github.io/wasm-pack/installer/init.sh -sSf | sh
-        
+
       - name: Build Package
         run: make build-wasm
-        
+
       - name: Install Test Dependencies
         working-directory: bindings/lz-str-wasm/binding-tests
         run: npm i
-          
+
       - name: Run Tests
         working-directory: bindings/lz-str-wasm/binding-tests
         run: npm test
-        
-  Python:
+
+  python:
+    name: Python
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v3
-        
+        uses: actions/checkout@v6
+
       - name: Install Maturin
         run: pip install maturin
-        
+
       - name: Build Wheel
         working-directory: bindings/lz-str-py
         run: maturin build --release
